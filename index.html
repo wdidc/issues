@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+  <link rel='stylesheet' type='text/css' href='css/styles.css'>
+  </head>
+  <body>
+    <div class='issues'></div>
+    <script id="issue-template" type="text/x-handlebars-template">
+      {{#each issues}}
+	<a href='{{this.html_url}}' class="issue">
+	  <h1>{{this.title}}</h1>
+	  Created by {{this.user.login}} 
+	  <abbr class="timeago" title="{{this.created_at}}"></abbr>
+	  <br>
+          {{this.comments}} comments.
+	</a>
+      {{/each}}
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js'></script>
+    <script src='http://jshawl.com/jq'></script>
+    <script src='http://timeago.yarp.com/jquery.timeago.js'></script>
+    <script src='lib/github.js'></script>
+    <script>
+      var init = (function init(){
+	var gh = github(localStorage.getItem("accessToken"))
+	gh.repo("ga-dc/pbj-project2").issues(function(issues){
+	  console.log(issues[0])
+	  var source   = $("#issue-template").html();
+	  var template = Handlebars.compile(source);
+	  $(".issues").html(template({issues: issues}))
+	  $(".timeago").timeago()
+	})
+        return init
+      })()
+      setInterval(init, 30000)
+    </script>
+  </body>
+</html>
